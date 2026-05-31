@@ -1,0 +1,19 @@
+[package]
+name = "flux-chaos"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Fault-injection harness proving flux loses no jobs under failure."
+
+[dependencies]
+flux-core = { path = "../crates/flux-core" }
+flux-bus = { path = "../crates/flux-bus" }
+flux-engine = { path = "../crates/flux-engine" }
+async-trait.workspace = true
+rand.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true }
