@@ -19,7 +19,7 @@ tracing-subscriber.workspace = true
 
 [dev-dependencies]
 tokio = { workspace = true }
-criterion = "0.5"
+criterion = "0.8"
 
 [[bench]]
 name = "throughput"
