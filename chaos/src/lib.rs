@@ -68,7 +68,7 @@ impl EventBus for ChaosBus {
         let delivery = self.inner.poll(topic).await?;
 
         if let Some(ref delivery) = delivery {
-            let roll: f64 = self.rng.lock().expect("lock").gen();
+            let roll: f64 = self.rng.lock().expect("lock").random();
             if roll < self.config.duplicate_probability {
                 // Buffer a copy to be redelivered on the next poll.
                 *self.pending_duplicate.lock().expect("lock") = Some(delivery.clone());
