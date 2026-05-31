@@ -1,0 +1,37 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/flux-core",
+    "crates/flux-bus",
+    "crates/flux-engine",
+    "crates/flux-cli",
+    "chaos",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+authors = ["Joseph Edwards <josephleonedwards@gmail.com>"]
+repository = "https://github.com/leisurelyleon/flux-orchestrator"
+description = "A fault-tolerant distributed job orchestrator with effectively-once processing."
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+async-trait = "0.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+rand = "0.8"
+# Kafka is OPTIONAL and feature-gated; not pulled unless explicitly enabled.
+rdkafka = { version = "0.36", features = ["tokio"] }
+
+[profile.release]
+strip = true
+lto = "thin"
+codegen-units = 1
