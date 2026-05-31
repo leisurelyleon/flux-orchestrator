@@ -3,7 +3,7 @@
 
 use std::sync::Arc;
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 use flux_bus::InMemoryBus;
 use flux_core::{Job, RetryPolicy};

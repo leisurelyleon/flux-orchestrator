@@ -46,7 +46,10 @@ impl InMemoryBus {
             let mut items: Vec<(u64, Envelope)> = state.in_flight.drain().collect();
             items.sort_by_key(|(offset, _)| *offset);
             for (offset, envelope) in items {
-                state.pending.push_back(Delivery { offset: Offset(offset), envelope });
+                state.pending.push_back(Delivery {
+                    offset: Offset(offset),
+                    envelope,
+                });
             }
         }
     }
@@ -59,7 +62,10 @@ impl EventBus for InMemoryBus {
         let state = guard.entry(topic.to_string()).or_default();
         let offset = state.next_offset;
         state.next_offset += 1;
-        state.pending.push_back(Delivery { offset: Offset(offset), envelope });
+        state.pending.push_back(Delivery {
+            offset: Offset(offset),
+            envelope,
+        });
         Ok(Offset(offset))
     }
 
@@ -70,7 +76,9 @@ impl EventBus for InMemoryBus {
         };
         match state.pending.pop_front() {
             Some(delivery) => {
-                state.in_flight.insert(delivery.offset.0, delivery.envelope.clone());
+                state
+                    .in_flight
+                    .insert(delivery.offset.0, delivery.envelope.clone());
                 Ok(Some(delivery))
             }
             None => Ok(None),
@@ -103,7 +111,9 @@ mod tests {
     #[tokio::test]
     async fn publish_then_poll_returns_message() {
         let bus = InMemoryBus::new();
-        bus.publish("t", Envelope::new("k", vec![1, 2, 3])).await.unwrap();
+        bus.publish("t", Envelope::new("k", vec![1, 2, 3]))
+            .await
+            .unwrap();
         let delivery = bus.poll("t").await.unwrap().unwrap();
         assert_eq!(delivery.envelope.key, "k");
         assert_eq!(bus.in_flight_count("t"), 1);

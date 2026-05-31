@@ -4,7 +4,7 @@
 use std::sync::Arc;
 
 use flux_bus::{Envelope, EventBus};
-use flux_core::{classify, should_dead_letter, Job, JobState, RetryPolicy};
+use flux_core::{Job, JobState, RetryPolicy, classify, should_dead_letter};
 
 use crate::dedup_store::DedupStore;
 use crate::error::EngineResult;
@@ -62,7 +62,9 @@ impl Orchestrator {
     /// Submits a job for processing.
     pub async fn submit(&self, job: &Job) -> EngineResult<()> {
         let payload = serde_json::to_vec(job)?;
-        self.bus.publish(&self.topic, Envelope::new(&job.idempotency_key, payload)).await?;
+        self.bus
+            .publish(&self.topic, Envelope::new(&job.idempotency_key, payload))
+            .await?;
         Ok(())
     }
 
@@ -97,7 +99,10 @@ impl Orchestrator {
                     job.state = JobState::DeadLettered;
                     let payload = serde_json::to_vec(&job)?;
                     self.bus
-                        .publish(&self.dead_letter_topic, Envelope::new(&job.idempotency_key, payload))
+                        .publish(
+                            &self.dead_letter_topic,
+                            Envelope::new(&job.idempotency_key, payload),
+                        )
                         .await?;
                     Ok(StepOutcome::DeadLettered(job.id.to_string()))
                 } else {
@@ -164,7 +169,9 @@ mod tests {
     #[tokio::test]
     async fn retries_transient_failure_then_succeeds() {
         let bus = Arc::new(InMemoryBus::new());
-        let handler = Arc::new(FlakyHandler { succeed_at_attempt: 2 });
+        let handler = Arc::new(FlakyHandler {
+            succeed_at_attempt: 2,
+        });
         let orch = Orchestrator::new(bus, handler, RetryPolicy::default(), "jobs");
         orch.submit(&job("j1", "k1")).await.unwrap();
         let outcomes = orch.run_until_idle().await.unwrap();
@@ -180,8 +187,13 @@ mod tests {
     #[tokio::test]
     async fn dead_letters_after_exhausting_retries() {
         let bus = Arc::new(InMemoryBus::new());
-        let handler = Arc::new(FlakyHandler { succeed_at_attempt: 100 });
-        let policy = RetryPolicy { max_attempts: 2, ..RetryPolicy::default() };
+        let handler = Arc::new(FlakyHandler {
+            succeed_at_attempt: 100,
+        });
+        let policy = RetryPolicy {
+            max_attempts: 2,
+            ..RetryPolicy::default()
+        };
         let orch = Orchestrator::new(bus.clone(), handler, policy, "jobs");
         orch.submit(&job("j1", "k1")).await.unwrap();
         let outcomes = orch.run_until_idle().await.unwrap();

@@ -75,7 +75,10 @@ mod tests {
 
     #[test]
     fn should_retry_respects_max_attempts() {
-        let p = RetryPolicy { max_attempts: 3, ..RetryPolicy::default() };
+        let p = RetryPolicy {
+            max_attempts: 3,
+            ..RetryPolicy::default()
+        };
         assert!(p.should_retry(2));
         assert!(!p.should_retry(3));
     }

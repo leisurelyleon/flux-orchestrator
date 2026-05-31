@@ -8,9 +8,9 @@ pub mod job;
 pub mod retry;
 pub mod state_machine;
 
-pub use dead_letter::{classify, should_dead_letter, FailureClass};
+pub use dead_letter::{FailureClass, classify, should_dead_letter};
 pub use error::CoreError;
 pub use idempotency::DedupSet;
 pub use job::{Job, JobId, JobState};
 pub use retry::RetryPolicy;
-pub use state_machine::{transition, JobEvent, Transition};
+pub use state_machine::{JobEvent, Transition, transition};

@@ -17,7 +17,10 @@ impl DedupStore {
     }
 
     pub fn contains(&self, key: &str) -> bool {
-        self.inner.lock().expect("dedup lock poisoned").contains(key)
+        self.inner
+            .lock()
+            .expect("dedup lock poisoned")
+            .contains(key)
     }
 
     /// Records a key; returns `true` if newly recorded.

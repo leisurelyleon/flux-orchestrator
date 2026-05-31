@@ -27,7 +27,10 @@ pub struct ChaosConfig {
 
 impl Default for ChaosConfig {
     fn default() -> Self {
-        Self { duplicate_probability: 0.3, seed: 42 }
+        Self {
+            duplicate_probability: 0.3,
+            seed: 42,
+        }
     }
 }
 
@@ -101,23 +104,37 @@ mod tests {
         let inner = Arc::new(InMemoryBus::new());
         let chaos = Arc::new(ChaosBus::new(
             inner,
-            ChaosConfig { duplicate_probability: 0.9, seed: 7 },
+            ChaosConfig {
+                duplicate_probability: 0.9,
+                seed: 7,
+            },
         ));
         let orch = Orchestrator::new(chaos, Arc::new(EchoHandler), RetryPolicy::default(), "jobs");
 
         for i in 0..20 {
             let key = format!("key-{i}");
-            orch.submit(&Job::new(format!("job-{i}"), key, "{}")).await.unwrap();
+            orch.submit(&Job::new(format!("job-{i}"), key, "{}"))
+                .await
+                .unwrap();
         }
 
         let outcomes = orch.run_until_idle().await.unwrap();
 
-        let completed = outcomes.iter().filter(|o| matches!(o, StepOutcome::Completed(_))).count();
-        let skipped = outcomes.iter().filter(|o| matches!(o, StepOutcome::Skipped(_))).count();
+        let completed = outcomes
+            .iter()
+            .filter(|o| matches!(o, StepOutcome::Completed(_)))
+            .count();
+        let skipped = outcomes
+            .iter()
+            .filter(|o| matches!(o, StepOutcome::Skipped(_)))
+            .count();
 
         // Exactly 20 distinct keys completed; any extra deliveries were skipped.
         assert_eq!(completed, 20);
-        assert!(skipped > 0, "chaos should have injected at least one duplicate");
+        assert!(
+            skipped > 0,
+            "chaos should have injected at least one duplicate"
+        );
         assert_eq!(orch.dedup().len(), 20);
     }
 
@@ -134,7 +151,9 @@ mod tests {
         );
 
         for i in 0..10 {
-            orch.submit(&Job::new(format!("job-{i}"), format!("key-{i}"), "{}")).await.unwrap();
+            orch.submit(&Job::new(format!("job-{i}"), format!("key-{i}"), "{}"))
+                .await
+                .unwrap();
         }
 
         // Process a few, then simulate a crash: return in-flight work to pending.
@@ -143,7 +162,8 @@ mod tests {
         inner.recover("jobs");
 
         let outcomes = orch.run_until_idle().await.unwrap();
-        let total_completed = 2 + outcomes.iter()
+        let total_completed = 2 + outcomes
+            .iter()
             .filter(|o| matches!(o, StepOutcome::Completed(_)))
             .count();
 

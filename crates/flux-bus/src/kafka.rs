@@ -37,7 +37,9 @@ impl KafkaBus {
             .create()
             .map_err(|e| BusError::Backend(e.to_string()))?;
 
-        consumer.subscribe(&[topic]).map_err(|e| BusError::Backend(e.to_string()))?;
+        consumer
+            .subscribe(&[topic])
+            .map_err(|e| BusError::Backend(e.to_string()))?;
 
         Ok(Self { producer, consumer })
     }
@@ -46,7 +48,9 @@ impl KafkaBus {
 #[async_trait]
 impl EventBus for KafkaBus {
     async fn publish(&self, topic: &str, envelope: Envelope) -> BusResult<Offset> {
-        let record = FutureRecord::to(topic).key(&envelope.key).payload(&envelope.payload);
+        let record = FutureRecord::to(topic)
+            .key(&envelope.key)
+            .payload(&envelope.payload);
         match self.producer.send(record, Duration::from_secs(5)).await {
             Ok((_partition, offset)) => Ok(Offset(offset as u64)),
             Err((err, _msg)) => Err(BusError::Backend(err.to_string())),

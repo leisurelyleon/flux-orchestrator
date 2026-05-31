@@ -16,7 +16,10 @@ pub struct Envelope {
 
 impl Envelope {
     pub fn new(key: impl Into<String>, payload: Vec<u8>) -> Self {
-        Self { key: key.into(), payload }
+        Self {
+            key: key.into(),
+            payload,
+        }
     }
 }
 

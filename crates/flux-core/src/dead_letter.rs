@@ -14,7 +14,10 @@ pub enum FailureClass {
 pub fn classify(message: &str) -> FailureClass {
     let lower = message.to_lowercase();
     const PERMANENT_MARKERS: [&str; 4] = ["invalid", "not found", "unauthorized", "malformed"];
-    if PERMANENT_MARKERS.iter().any(|marker| lower.contains(marker)) {
+    if PERMANENT_MARKERS
+        .iter()
+        .any(|marker| lower.contains(marker))
+    {
         FailureClass::Permanent
     } else {
         FailureClass::Transient
@@ -42,7 +45,10 @@ mod tests {
 
     #[test]
     fn classifies_transient_failures() {
-        assert_eq!(classify("connection reset by peer"), FailureClass::Transient);
+        assert_eq!(
+            classify("connection reset by peer"),
+            FailureClass::Transient
+        );
     }
 
     #[test]
