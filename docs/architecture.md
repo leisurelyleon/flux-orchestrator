@@ -7,11 +7,7 @@ backends.
 ## Crates
 
 ```text
-flux-core pure logic: job state machine,
-retry, idempotency, dead-letter (no I/O, no async) flux-bus
-the EventBus trait + in-memory backend + optional Kafka backend flux-engine orchestration:
-processing step, idempotent worker, dedup store, telemetry flux-cli the flux binary flux-chaos
-fault-injection harness proving no job loss under failure
+flux-core pure logic: job state machine, retry, idempotency, dead-letter (no I/O, no async) flux-bus the EventBus trait + in-memory backend + optional Kafka backend flux-engine orchestration: processing step, idempotent worker, dedup store, telemetry flux-cli the flux binary flux-chaos fault-injection harness proving no job loss under failure
 ```
 
 ## The EventBus seam
