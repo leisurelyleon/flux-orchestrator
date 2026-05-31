@@ -5,7 +5,7 @@ members = [
     "crates/flux-bus",
     "crates/flux-engine",
     "crates/flux-cli",
-    "chaos",
+    # "chaos",   # uncomment when we build the chaos harness next
 ]
 
 [workspace.package]
