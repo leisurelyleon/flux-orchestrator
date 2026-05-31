@@ -1,0 +1,21 @@
+[package]
+name = "flux-engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Orchestration for flux: consumer loop, idempotent worker, dedup store, telemetry."
+
+[dependencies]
+flux-core = { path = "../flux-core" }
+flux-bus = { path = "../flux-bus" }
+async-trait.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true }
