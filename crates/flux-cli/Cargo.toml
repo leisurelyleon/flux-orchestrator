@@ -1,0 +1,20 @@
+[package]
+name = "flux-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Command-line interface for flux."
+
+[[bin]]
+name = "flux"
+path = "src/main.rs"
+
+[dependencies]
+flux-core = { path = "../flux-core" }
+flux-bus = { path = "../flux-bus" }
+flux-engine = { path = "../flux-engine" }
+clap.workspace = true
+tokio.workspace = true
